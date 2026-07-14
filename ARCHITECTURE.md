@@ -23,21 +23,24 @@ NUAGEai
 ```text
 Sources
   -> n8n Collectors
+  -> Orchestrator
   -> Filter
   -> Analyst
   -> Researcher
+  -> Strategist
   -> Writer
+  -> Fact Checker
   -> Guardian
   -> Approval
   -> Publisher / CRM
-  -> Logger / Dashboard / Learning
+  -> Logger / Cost Controller / Dashboard / Learning / Incident Agent
 ```
 
 ## Layers
 
 | Layer | Role |
 | --- | --- |
-| Sources | Reddit, LinkedIn, YouTube, forums, news, Facebook, and authorized public channels. |
+| Sources | Reddit, YouTube, X, Telegram, and supported Facebook API surfaces. |
 | n8n Collection | API connection, scheduled triggers, pagination, normalization. |
 | Filtering | Deduplication, keyword rules, freshness, language, territory, spam rejection. |
 | Hermes Agents | Orchestration, scoring, enrichment, writing, security, approval routing. |
@@ -54,6 +57,8 @@ Sources
 - PostgreSQL for n8n and Hermes logs.
 - Redis for n8n queue mode.
 - Importable workflow JSON files in `workflows/n8n`.
+- DEV is completely separate from production.
+- All implementation work targets DEV unless a PR explicitly proposes a production change.
 
 ## Future Architecture
 
@@ -63,4 +68,4 @@ Sources
 - Automated backups and restore tests.
 - Secret manager.
 - Client configuration registry.
-
+- Production deployment process with manual approval gates.

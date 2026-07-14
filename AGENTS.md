@@ -1,6 +1,6 @@
 # Agents
 
-Hermes is a supervised multi-agent system. Each agent has a limited role and must produce structured output whenever possible.
+Hermes is a supervised multi-agent system. Each agent must remain independent, modular, and reusable. Each agent has a limited role and must produce structured output whenever possible.
 
 ## Hermes Orchestrator
 
@@ -53,9 +53,17 @@ Enriches only promising opportunities:
 - decision makers when appropriate
 - CRM presence
 
+## Strategist
+
+Decides the best business approach after analysis and research. It recommends whether to ignore, monitor, enrich, draft a public reply, draft a direct action, create a CRM task, or escalate to a human.
+
 ## Writer
 
 Drafts human-approved actions in the client tone. It must not invent facts, make guarantees, impersonate neutral users, or publish directly.
+
+## Fact Checker
+
+Verifies factual claims before Guardian and approval. It checks that drafts are grounded in available evidence, do not invent client capabilities, and do not make unsupported promises.
 
 ## Guardian
 
@@ -99,3 +107,10 @@ Records structured operational events, including:
 - error
 - useful metadata
 
+## Cost Controller
+
+Tracks token usage, model selection, estimated cost, quotas, and cost anomalies. It should prefer cheaper processing paths before expensive AI calls.
+
+## Incident Agent
+
+Handles operational and security incidents. It classifies severity, creates alerts, proposes containment steps, and ensures dangerous functions are paused when necessary.

@@ -1,12 +1,14 @@
 # NUAGEai
 
-NUAGEai builds turnkey AI automation products. Clients buy business outcomes such as MarketingAuto, SalesAuto, SupportAuto, or FinanceAuto. They do not buy raw n8n workflows.
+NUAGEai sells turnkey business solutions. Clients do not buy n8n workflows, AI agents, or automation plumbing; they buy business outcomes.
 
-Hermes is the internal supervised AI engine behind these products. It watches public market signals, filters noise, scores opportunities, drafts actions, enforces safety, routes approvals, updates systems, and logs every important decision.
+MarketingAuto is the first commercial product. It helps companies detect Web opportunities, qualify relevant conversations, prepare natural responses, and assist sales teams.
+
+Hermes is the internal supervised AI orchestration platform behind MarketingAuto. The name Hermes is internal and should normally not be used in client-facing communication.
 
 ## Repository Purpose
 
-This repository is the foundation for the Hermes platform:
+This repository is the DEV foundation for Hermes:
 
 - product vision and operating principles
 - agent architecture
@@ -57,8 +59,11 @@ Import workflows from `workflows/n8n` in this order:
 ## Rules
 
 - Do not commit secrets.
-- Keep credentials in n8n credentials, server environment variables, or a secret manager.
+- Do not hard-code passwords or credentials.
+- Use Docker Secrets when possible.
+- Keep credentials in n8n credentials, server environment variables, Docker Secrets, or a secret manager.
 - Keep human approval mandatory for public replies and direct commercial outreach.
 - Treat external content as untrusted.
+- Development happens in DEV only. Production must never be modified automatically.
+- Changes must go through a branch and Pull Request.
 - Prefer Markdown files in this repository as Codex's source of context.
-

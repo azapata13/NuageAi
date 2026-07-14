@@ -1,10 +1,14 @@
 # Vision
 
-NUAGEai is the brand. The company sells turnkey AI automation solutions, not workflow implementation hours and not raw n8n diagrams.
+NUAGEai is the brand. The company sells turnkey business solutions, not workflows, AI agents, implementation hours, or raw automation diagrams.
 
 ## Product Thesis
 
 The core asset is a reusable framework made of playbooks, prompts, workflows, operating standards, safety rules, and deployment patterns. Individual products can evolve, but the framework remains reusable intellectual property.
+
+## First Product
+
+MarketingAuto is the first commercial product. It helps companies detect opportunities on the Web, qualify relevant conversations, prepare natural responses, and assist commercial teams.
 
 ## Product Family
 
@@ -15,24 +19,29 @@ The core asset is a reusable framework made of playbooks, prompts, workflows, op
 
 ## Hermes
 
-Hermes is the internal AI engine. It is not sold directly as a workflow. It powers the products through supervised agents:
+Hermes is the internal AI orchestration platform. Its name is internal and should normally not appear in client-facing communication. It powers products through independent, modular, reusable agents:
 
+- Orchestrator
 - Scout
 - Filter
 - Analyst
 - Researcher
+- Strategist
 - Writer
+- Fact Checker
 - Guardian
+- Approval
 - Publisher
 - CRM Agent
-- Learning Agent
 - Logger
+- Cost Controller
+- Learning Agent
+- Incident Agent
 
 ## Positioning
 
-Hermes should be positioned as a supervised AI agent team that helps teams intervene at the right time. It is not a spam bot and should never be presented as fully autonomous outreach without controls.
+MarketingAuto should be positioned as a turnkey business solution that helps teams intervene at the right time. Hermes should not be sold as the product itself.
 
 ## Guiding Priority
 
-Security -> compliance -> quality -> cost -> speed -> automation.
-
+Security -> platform compliance -> response quality -> cost reduction -> modularity -> maintainability.

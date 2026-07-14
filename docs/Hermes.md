@@ -1,20 +1,22 @@
 # Hermes
 
-Hermes is a reusable supervised AI system for commercial intelligence and acquisition.
+Hermes is the internal reusable supervised AI orchestration platform for MarketingAuto and future NUAGEai products.
 
 ## Mission
 
-Hermes monitors public channels, detects useful commercial signals, removes noise, scores opportunities, enriches promising leads, drafts recommended actions, applies safety checks, and routes the final action to a human when required.
+Hermes monitors public channels, detects useful commercial signals, removes noise, scores opportunities, enriches promising leads, recommends strategy, drafts actions, checks facts, applies safety checks, controls cost, logs decisions, and routes the final action to a human when required.
 
 ## What Hermes Is Not
 
-Hermes is not a bot that publishes everywhere automatically. The early product must be reliable, explainable, and supervised.
+Hermes is not the client-facing product and is not a bot that publishes everywhere automatically. The early product must be reliable, explainable, supervised, compliant with platform rules, and modular.
 
 ## Initial Prototype Scope
 
 - Reddit
 - YouTube
-- one additional source
+- X
+- Telegram
+- Facebook official API support only where permitted
 - n8n orchestration
 - PostgreSQL logs
 - AI analysis after filtering
@@ -36,4 +38,3 @@ Hermes is not a bot that publishes everywhere automatically. The early product m
 ## Operating Principle
 
 The best first version finds good opportunities, explains why they matter, prepares excellent responses, and lets a human decide quickly.
-

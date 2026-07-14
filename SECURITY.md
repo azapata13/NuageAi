@@ -5,6 +5,8 @@ Security is a product feature, not an afterthought.
 ## Core Rules
 
 - No secrets in Git.
+- No passwords in code.
+- Use Docker Secrets when possible.
 - No public or direct commercial outreach without approval during early phases.
 - Treat external content as untrusted.
 - Block on uncertainty when risk is meaningful.
@@ -17,6 +19,7 @@ Store credentials in:
 
 - n8n credentials
 - environment variables
+- Docker Secrets
 - server secret manager
 - future dedicated secrets service
 
@@ -27,6 +30,25 @@ Do not store real credentials in:
 - screenshots
 - `.env.example`
 - GitHub issues
+
+## n8n Credentials
+
+n8n credentials must never contain hard-coded values in exported workflow JSON. Credentials are configured inside the DEV n8n instance or provided through approved secret mechanisms.
+
+## Environment Separation
+
+- DEV and production are fully separate.
+- All development work targets DEV.
+- Production must never be modified automatically.
+- Any production architecture change requires a documented Pull Request and manual approval.
+
+## Change Control
+
+- Work on a branch.
+- Open a Pull Request.
+- Document architecture-impacting changes.
+- Review security impact before merge.
+- Keep workflow exports versioned in GitHub.
 
 ## Access Control
 
@@ -78,4 +100,3 @@ Required:
 - n8n credentials backup strategy
 - restore procedure
 - periodic restore test
-

@@ -8,6 +8,9 @@
 - n8n
 - PostgreSQL
 - Redis
+- GitHub
+
+DEV is completely separate from production. All current development targets DEV only.
 
 ## Repository Directories
 
@@ -44,3 +47,6 @@ examples/
 - alerting channel
 - secret manager
 
+## Production Boundary
+
+Production must not be modified automatically. Any production architecture change requires a documented Pull Request, explicit review, and manual deployment approval.

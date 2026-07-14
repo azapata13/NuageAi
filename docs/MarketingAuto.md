@@ -1,10 +1,21 @@
 # MarketingAuto
 
-MarketingAuto is the first external product powered by Hermes.
+MarketingAuto is the first commercial product powered internally by Hermes.
 
 ## Goal
 
-Help clients monitor public market conversations and identify moments where an approved, useful commercial action could create value.
+Help clients detect opportunities on the Web, qualify relevant conversations, prepare natural responses, and assist sales teams.
+
+Hermes should remain internal language. Client-facing communication should focus on MarketingAuto and its business outcomes.
+
+## MVP Platforms
+
+- Reddit
+- YouTube
+- X
+- Telegram
+
+Facebook is supported only through official APIs and allowed functionality. Facebook groups that are not accessible through official APIs are handled in assisted mode only, meaning response preparation and human action support without unauthorized automation.
 
 ## MVP Capabilities
 
@@ -28,4 +39,3 @@ All public replies and direct commercial messages require approval during the ea
 - CRM task
 - daily digest
 - weekly opportunity report
-
