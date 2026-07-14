@@ -1,0 +1,71 @@
+{
+  "name": "HERMES - LOGGER",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "hermes/logger",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "logger-webhook",
+      "name": "Logger Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-520, 0],
+      "webhookId": "hermes-logger"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $json.body || $json;\nconst event = body.event || body;\nconst normalized = {\n  level: event.level || 'INFO',\n  client_id: event.client_id || 'unknown',\n  workflow_name: event.workflow_name || 'unknown',\n  agent: event.agent || 'unknown',\n  source: event.source || null,\n  content_id: event.content_id || null,\n  action: event.action || null,\n  model: event.model || null,\n  tokens: Number(event.tokens || 0),\n  estimated_cost: Number(event.estimated_cost || 0),\n  duration_ms: Number(event.duration_ms || 0),\n  score: Number(event.score || 0),\n  approval_status: event.approval_status || null,\n  error_message: event.error_message || null,\n  metadata: event.metadata || event\n};\nreturn [{ json: normalized }];"
+      },
+      "id": "normalize-log",
+      "name": "Normalize Log Event",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-260, 0]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "insert into hermes_logs (level, client_id, workflow_name, agent, source, content_id, action, model, tokens, estimated_cost, duration_ms, score, approval_status, error_message, metadata) values ('{{$json.level}}', '{{$json.client_id}}', '{{$json.workflow_name}}', '{{$json.agent}}', '{{$json.source}}', '{{$json.content_id}}', '{{$json.action}}', '{{$json.model}}', {{$json.tokens}}, {{$json.estimated_cost}}, {{$json.duration_ms}}, {{$json.score}}, '{{$json.approval_status}}', '{{$json.error_message}}', '{{JSON.stringify($json.metadata).replace(/'/g, \"''\")}}'::jsonb);",
+        "options": {}
+      },
+      "id": "postgres-insert",
+      "name": "Insert Hermes Log",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [20, 0],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: true, received: $json } }}",
+        "options": {}
+      },
+      "id": "respond",
+      "name": "Respond OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [300, 0]
+    }
+  ],
+  "connections": {
+    "Logger Webhook": {
+      "main": [[{ "node": "Normalize Log Event", "type": "main", "index": 0 }]]
+    },
+    "Normalize Log Event": {
+      "main": [[{ "node": "Insert Hermes Log", "type": "main", "index": 0 }]]
+    },
+    "Insert Hermes Log": {
+      "main": [[{ "node": "Respond OK", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveExecutionProgress": true
+  },
+  "pinData": {}
+}
+

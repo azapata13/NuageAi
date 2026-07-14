@@ -1,0 +1,18 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+
+# Runtime data
+n8n_data/
+postgres_data/
+redis_data/
+backups/
+logs/
+
+# Local/editor files
+.idea/
+.vscode/
+node_modules/
+__pycache__/
+

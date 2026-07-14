@@ -1,0 +1,145 @@
+{
+  "name": "HERMES - MAIN PIPELINE",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [-900, -80]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Every 6 Hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-900, 120]
+    },
+    {
+      "parameters": {
+        "jsCode": "const now = new Date().toISOString();\nreturn [\n  { json: { client_id: 'demo', source: 'reddit', content_id: 'reddit-001', url: 'https://example.com/reddit-001', author: 'sample_user', text: 'Looking for greenhouse automation and crop monitoring options in Canada.', created_at: now, keywords: ['greenhouse', 'automation'], territory: 'Canada' } },\n  { json: { client_id: 'demo', source: 'youtube', content_id: 'youtube-001', url: 'https://example.com/youtube-001', author: 'sample_channel', text: 'Question: what is the best way to monitor irrigation and sensors remotely?', created_at: now, keywords: ['monitoring', 'irrigation'], territory: 'Canada' } },\n  { json: { client_id: 'demo', source: 'news', content_id: 'news-001', url: 'https://example.com/news-001', author: 'sample_news', text: 'Regional producer announces expansion of controlled environment agriculture facility.', created_at: now, keywords: ['expansion', 'controlled environment'], territory: 'Canada' } }\n];"
+      },
+      "id": "scout",
+      "name": "Scout - Collect Signals",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-620, 20]
+    },
+    {
+      "parameters": {
+        "jsCode": "const seen = new Set();\nconst allowedTerritories = ['Canada', 'USA', 'United States'];\nconst blockedTerms = ['giveaway', 'coupon spam', 'crypto'];\nreturn $input.all()\n  .filter(item => {\n    const j = item.json;\n    const key = `${j.source}:${j.content_id}`;\n    if (seen.has(key)) return false;\n    seen.add(key);\n    if (!j.text || j.text.length < 40) return false;\n    if (!allowedTerritories.includes(j.territory)) return false;\n    const lower = j.text.toLowerCase();\n    if (blockedTerms.some(term => lower.includes(term))) return false;\n    return true;\n  })\n  .map(item => ({ json: { ...item.json, filter_status: 'PASSED', filtered_at: new Date().toISOString() } }));"
+      },
+      "id": "filter",
+      "name": "Filter - Rules First",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-360, 20]
+    },
+    {
+      "parameters": {
+        "jsCode": "function scoreSignal(text) {\n  const lower = text.toLowerCase();\n  let score = 30;\n  if (lower.includes('looking for') || lower.includes('best way') || lower.includes('recommend')) score += 25;\n  if (lower.includes('automation') || lower.includes('monitor') || lower.includes('sensor')) score += 20;\n  if (lower.includes('expansion') || lower.includes('facility')) score += 15;\n  if (lower.includes('urgent') || lower.includes('asap')) score += 10;\n  return Math.min(score, 100);\n}\nreturn $input.all().map(item => {\n  const score = scoreSignal(item.json.text || '');\n  const urgency = score >= 75 ? 'high' : score >= 55 ? 'medium' : 'low';\n  const recommendation = score >= 70 ? 'research_and_draft' : score >= 50 ? 'keep_for_review' : 'log_only';\n  return { json: { ...item.json, agent: 'Analyst', score, urgency, recommendation, analysis_summary: `Potential ${urgency} commercial signal from ${item.json.source}.` } };\n});"
+      },
+      "id": "analyst",
+      "name": "Analyst - Score Opportunity",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-100, 20]
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => {\n  const j = item.json;\n  const action = j.score >= 70 ? 'Prepare a human-approved outreach draft.' : 'Add to daily digest for review.';\n  const draft = j.score >= 70\n    ? `Bonjour, j'ai vu votre question au sujet de ${j.keywords?.join(', ') || 'l\\'automatisation'}. Nous travaillons sur des solutions de veille et d'automatisation pour aider les equipes a evaluer ce type de besoin. Si vous voulez, je peux vous partager une piste simple a comparer.`\n    : '';\n  return { json: { ...j, agent: 'Writer', proposed_action: action, draft_message: draft } };\n});"
+      },
+      "id": "writer",
+      "name": "Writer - Draft Action",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [160, 20]
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => {\n  const j = item.json;\n  const text = `${j.text || ''} ${j.draft_message || ''}`.toLowerCase();\n  const risky = ['guarantee', 'secret', 'password', 'medical advice', 'legal advice'].some(term => text.includes(term));\n  let approval_status = 'VALIDATION_HUMAINE_OBLIGATOIRE';\n  if (risky) approval_status = 'BLOQUE';\n  if (j.score < 50) approval_status = 'APPROUVE_LOG_ONLY';\n  return { json: { ...j, agent: 'Guardian', approval_status, guardian_notes: risky ? 'Risk term detected. Human admin review required.' : 'No blocking risk detected. Human approval still required for public outreach.' } };\n});"
+      },
+      "id": "guardian",
+      "name": "Guardian - Safety Gate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [420, 20]
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => ({\n  json: {\n    level: item.json.approval_status === 'BLOQUE' ? 'WARNING' : 'INFO',\n    client_id: item.json.client_id,\n    workflow_name: 'HERMES - MAIN PIPELINE',\n    agent: item.json.agent,\n    source: item.json.source,\n    content_id: item.json.content_id,\n    action: item.json.proposed_action,\n    score: item.json.score,\n    approval_status: item.json.approval_status,\n    metadata: item.json\n  }\n}));"
+      },
+      "id": "logger-payload",
+      "name": "Build Logger Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 20]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.WEBHOOK_URL + 'webhook/hermes/logger'}}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "event",
+              "value": "={{$json}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "send-log",
+      "name": "Send To HERMES LOGGER",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [940, 20],
+      "continueOnFail": true
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [[{ "node": "Scout - Collect Signals", "type": "main", "index": 0 }]]
+    },
+    "Every 6 Hours": {
+      "main": [[{ "node": "Scout - Collect Signals", "type": "main", "index": 0 }]]
+    },
+    "Scout - Collect Signals": {
+      "main": [[{ "node": "Filter - Rules First", "type": "main", "index": 0 }]]
+    },
+    "Filter - Rules First": {
+      "main": [[{ "node": "Analyst - Score Opportunity", "type": "main", "index": 0 }]]
+    },
+    "Analyst - Score Opportunity": {
+      "main": [[{ "node": "Writer - Draft Action", "type": "main", "index": 0 }]]
+    },
+    "Writer - Draft Action": {
+      "main": [[{ "node": "Guardian - Safety Gate", "type": "main", "index": 0 }]]
+    },
+    "Guardian - Safety Gate": {
+      "main": [[{ "node": "Build Logger Payload", "type": "main", "index": 0 }]]
+    },
+    "Build Logger Payload": {
+      "main": [[{ "node": "Send To HERMES LOGGER", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveExecutionProgress": true,
+    "saveManualExecutions": true
+  },
+  "pinData": {}
+}
+

@@ -1,0 +1,80 @@
+{
+  "name": "HERMES - APPROVAL INBOX",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "hermes/approval",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "approval-webhook",
+      "name": "Approval Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-520, 0],
+      "webhookId": "hermes-approval"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $json.body || $json;\nconst opportunity = body.opportunity || body;\nconst needsApproval = ['VALIDATION_HUMAINE_OBLIGATOIRE', 'BLOQUE'].includes(opportunity.approval_status);\nreturn [{ json: {\n  client_id: opportunity.client_id || 'unknown',\n  source: opportunity.source || null,\n  content_id: opportunity.content_id || null,\n  score: opportunity.score || 0,\n  approval_status: opportunity.approval_status || 'VALIDATION_HUMAINE_OBLIGATOIRE',\n  reviewer_action: needsApproval ? 'review_required' : 'no_review_required',\n  draft_message: opportunity.draft_message || '',\n  metadata: opportunity\n}}];"
+      },
+      "id": "prepare-review",
+      "name": "Prepare Review Item",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-240, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.WEBHOOK_URL + 'webhook/hermes/logger'}}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "event",
+              "value": "={{ { level: 'INFO', client_id: $json.client_id, workflow_name: 'HERMES - APPROVAL INBOX', agent: 'Publisher', source: $json.source, content_id: $json.content_id, action: $json.reviewer_action, score: $json.score, approval_status: $json.approval_status, metadata: $json } }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "log-review",
+      "name": "Log Review Item",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [40, 0],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: true, next_step: $json.reviewer_action, item: $json } }}",
+        "options": {}
+      },
+      "id": "respond",
+      "name": "Respond Approval Item",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [320, 0]
+    }
+  ],
+  "connections": {
+    "Approval Webhook": {
+      "main": [[{ "node": "Prepare Review Item", "type": "main", "index": 0 }]]
+    },
+    "Prepare Review Item": {
+      "main": [[{ "node": "Log Review Item", "type": "main", "index": 0 }]]
+    },
+    "Log Review Item": {
+      "main": [[{ "node": "Respond Approval Item", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveExecutionProgress": true
+  },
+  "pinData": {}
+}
+

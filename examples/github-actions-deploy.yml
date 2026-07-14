@@ -1,0 +1,22 @@
+name: Deploy Hermes Platform
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ vars.ENABLE_SERVER_DEPLOY == 'true' }}
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            export APP_DIR="${{ secrets.DEPLOY_PATH }}"
+            bash "$APP_DIR/scripts/deploy_server.sh"
+

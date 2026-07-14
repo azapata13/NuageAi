@@ -1,0 +1,80 @@
+{
+  "name": "HERMES - ERROR HANDLER",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "hermes/error",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "error-webhook",
+      "name": "Error Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-520, 0],
+      "webhookId": "hermes-error-handler"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $json.body || $json;\nconst error = body.error || body;\nconst message = String(error.message || error.error_message || 'Unknown error');\nconst lower = message.toLowerCase();\nlet level = 'ERROR';\nlet retry_allowed = true;\nlet max_retries = 3;\nlet action = 'retry_with_backoff';\nif (lower.includes('auth') || lower.includes('credential') || lower.includes('401') || lower.includes('403')) {\n  level = 'ERROR'; retry_allowed = false; max_retries = 0; action = 'alert_consultant';\n}\nif (lower.includes('secret') || lower.includes('leak') || lower.includes('unauthorized publication') || lower.includes('client mix')) {\n  level = 'CRITICAL'; retry_allowed = false; max_retries = 0; action = 'stop_and_alert_admin';\n}\nreturn [{ json: {\n  level,\n  retry_allowed,\n  max_retries,\n  action,\n  client_id: error.client_id || 'unknown',\n  workflow_name: error.workflow_name || 'unknown',\n  agent: error.agent || 'Error Handler',\n  error_message: message,\n  metadata: error\n}}];"
+      },
+      "id": "classify",
+      "name": "Classify Error",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-240, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.WEBHOOK_URL + 'webhook/hermes/logger'}}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "event",
+              "value": "={{$json}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "send-log",
+      "name": "Send Error To Logger",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [40, 0],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: true, error_policy: $json } }}",
+        "options": {}
+      },
+      "id": "respond",
+      "name": "Respond Error Policy",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [320, 0]
+    }
+  ],
+  "connections": {
+    "Error Webhook": {
+      "main": [[{ "node": "Classify Error", "type": "main", "index": 0 }]]
+    },
+    "Classify Error": {
+      "main": [[{ "node": "Send Error To Logger", "type": "main", "index": 0 }]]
+    },
+    "Send Error To Logger": {
+      "main": [[{ "node": "Respond Error Policy", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveExecutionProgress": true
+  },
+  "pinData": {}
+}
+
