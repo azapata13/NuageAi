@@ -1,0 +1,105 @@
+{
+  "name": "MARKETINGAUTO - AUTOFORM INTAKE",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "marketingauto/autoform/intake",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "autoform-webhook",
+      "name": "AutoForm Intake Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-760, 0],
+      "webhookId": "marketingauto-autoform-intake"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $json.body || $json;\nconst request = body.request || body;\nconst forms = Array.isArray(request.forms) ? request.forms : [];\nreturn forms\n  .filter(form => form.platform === 'contact_form' || form.metadata?.workflow_type === 'contact_form_outreach')\n  .map(form => ({ json: {\n    client_id: request.client_id || form.client_id || 'unknown',\n    request_id: request.request_id || null,\n    autopost_form_id: form.autopost_form_id,\n    business_name: form.metadata?.business_name || '',\n    contact_form_url: form.metadata?.contact_form_url || form.source_url || '',\n    website_url: form.metadata?.website_url || '',\n    edited_message: form.edited_message || form.draft_message || '',\n    approval_decision: form.approval_decision || '',\n    guardian_status: form.guardian_status || 'VALIDATION_HUMAINE_OBLIGATOIRE',\n    score: form.score || 0,\n    metadata: form.metadata || {}\n  }}));"
+      },
+      "id": "normalize-autoform",
+      "name": "Normalize AutoForm Items",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-480, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => {\n  const j = item.json;\n  const errors = [];\n  if (!j.contact_form_url) errors.push('missing_contact_form_url');\n  if (!j.edited_message) errors.push('missing_message');\n  if (j.approval_decision !== 'approve_for_manual_post') errors.push('human_approval_missing');\n  if (j.guardian_status === 'BLOQUE') errors.push('guardian_blocked');\n  const status = errors.length ? 'manual_review' : 'queued_for_worker';\n  return { json: { ...j, status, errors, worker_allowed: errors.length === 0 } };\n});"
+      },
+      "id": "autoform-gate",
+      "name": "Approval And Safety Gate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-200, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => ({ json: {\n  level: item.json.worker_allowed ? 'INFO' : 'WARNING',\n  client_id: item.json.client_id,\n  workflow_name: 'MARKETINGAUTO - AUTOFORM INTAKE',\n  agent: 'AutoForm',\n  source: 'contact_form',\n  content_id: item.json.autopost_form_id,\n  action: item.json.status,\n  score: item.json.score,\n  approval_status: item.json.approval_decision,\n  metadata: item.json\n}}));"
+      },
+      "id": "build-log",
+      "name": "Build Logger Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [80, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.WEBHOOK_URL + 'webhook/hermes/logger'}}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "event",
+              "value": "={{$json}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "send-log",
+      "name": "Send To HERMES LOGGER",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [360, 0],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: true, status: 'received_autoform_intake' } }}",
+        "options": {}
+      },
+      "id": "respond",
+      "name": "Respond OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [640, 0]
+    }
+  ],
+  "connections": {
+    "AutoForm Intake Webhook": {
+      "main": [[{ "node": "Normalize AutoForm Items", "type": "main", "index": 0 }]]
+    },
+    "Normalize AutoForm Items": {
+      "main": [[{ "node": "Approval And Safety Gate", "type": "main", "index": 0 }]]
+    },
+    "Approval And Safety Gate": {
+      "main": [[{ "node": "Build Logger Payload", "type": "main", "index": 0 }]]
+    },
+    "Build Logger Payload": {
+      "main": [[{ "node": "Send To HERMES LOGGER", "type": "main", "index": 0 }]]
+    },
+    "Send To HERMES LOGGER": {
+      "main": [[{ "node": "Respond OK", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}
+

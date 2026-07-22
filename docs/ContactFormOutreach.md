@@ -71,6 +71,10 @@ Approved AutoPostForm
   -> Result Logger
 ```
 
+## n8n Architecture
+
+See [n8n-marketing-tools.md](n8n-marketing-tools.md) and `workflows/n8n/MARKETINGAUTO_AUTOFORM_INTAKE.json`.
+
 ## Stop Conditions
 
 - CAPTCHA detected
@@ -81,4 +85,3 @@ Approved AutoPostForm
 - source was previously contacted
 - quota exceeded
 - Guardian status is not approved
-

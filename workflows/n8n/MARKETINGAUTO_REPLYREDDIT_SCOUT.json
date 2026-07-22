@@ -1,0 +1,111 @@
+{
+  "name": "MARKETINGAUTO - REPLYREDDIT SCOUT",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [-900, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const now = new Date().toISOString();\nreturn [\n  { json: { client_id: 'demo', subreddit: 'greenhouses', post_id: 'demo-001', url: 'https://www.reddit.com/r/greenhouses/comments/demo001/', title: 'How do you monitor irrigation remotely?', text: 'Looking for a better way to monitor irrigation and greenhouse sensors without checking manually every day.', author: 'sample_user', created_at: now, keywords: ['greenhouse', 'irrigation', 'monitoring'] } },\n  { json: { client_id: 'demo', subreddit: 'hydroponics', post_id: 'demo-002', url: 'https://www.reddit.com/r/Hydroponics/comments/demo002/', title: 'Automation software recommendations?', text: 'Does anyone use automation tools to track tasks and leads for horticulture suppliers?', author: 'sample_user2', created_at: now, keywords: ['automation', 'horticulture'] } }\n];"
+      },
+      "id": "mock-reddit-collector",
+      "name": "Mock Reddit Collector",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-620, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => {\n  const j = item.json;\n  const text = `${j.title} ${j.text}`.toLowerCase();\n  const promotionalRisk = ['buy now', 'coupon', 'crypto', 'giveaway'].some(term => text.includes(term));\n  const score = promotionalRisk ? 20 : (text.includes('looking') || text.includes('recommend') ? 75 : 55);\n  return { json: { ...j, score, promotional_risk: promotionalRisk, recommendation: score >= 70 ? 'draft_reply' : 'daily_digest' } };\n});"
+      },
+      "id": "analyst",
+      "name": "Analyst - Score Reddit Candidate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-340, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => {\n  const j = item.json;\n  const draft = j.score >= 70\n    ? `Helpful thread. A practical starting point is to map the repeated manual checks, then decide which signals are worth monitoring automatically. I work on MarketingAuto, which helps teams detect relevant Web conversations and prepare approved responses, so I would compare tools based on signal quality, review workflow, and cost controls.`\n    : '';\n  return { json: { ...j, draft_message: draft, fact_check_status: 'needs_review' } };\n});"
+      },
+      "id": "writer",
+      "name": "Writer - Draft Reddit Reply",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-60, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => {\n  const j = item.json;\n  let guardian_status = 'VALIDATION_HUMAINE_OBLIGATOIRE';\n  const notes = [];\n  if (j.promotional_risk) { guardian_status = 'BLOQUE'; notes.push('Promotional/spam risk detected.'); }\n  notes.push('Check subreddit rules before any reply.');\n  notes.push('Human approval required for exact text.');\n  return { json: { ...j, guardian_status, guardian_notes: notes } };\n});"
+      },
+      "id": "guardian",
+      "name": "Guardian - Reddit Safety Gate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => ({ json: {\n  level: item.json.guardian_status === 'BLOQUE' ? 'WARNING' : 'INFO',\n  client_id: item.json.client_id,\n  workflow_name: 'MARKETINGAUTO - REPLYREDDIT SCOUT',\n  agent: 'ReplyReddit',\n  source: 'reddit',\n  content_id: item.json.post_id,\n  action: item.json.recommendation,\n  score: item.json.score,\n  approval_status: item.json.guardian_status,\n  metadata: item.json\n}}));"
+      },
+      "id": "build-log",
+      "name": "Build Logger Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [500, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.WEBHOOK_URL + 'webhook/hermes/logger'}}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "event",
+              "value": "={{$json}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "send-log",
+      "name": "Send To HERMES LOGGER",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [780, 0],
+      "continueOnFail": true
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [[{ "node": "Mock Reddit Collector", "type": "main", "index": 0 }]]
+    },
+    "Mock Reddit Collector": {
+      "main": [[{ "node": "Analyst - Score Reddit Candidate", "type": "main", "index": 0 }]]
+    },
+    "Analyst - Score Reddit Candidate": {
+      "main": [[{ "node": "Writer - Draft Reddit Reply", "type": "main", "index": 0 }]]
+    },
+    "Writer - Draft Reddit Reply": {
+      "main": [[{ "node": "Guardian - Reddit Safety Gate", "type": "main", "index": 0 }]]
+    },
+    "Guardian - Reddit Safety Gate": {
+      "main": [[{ "node": "Build Logger Payload", "type": "main", "index": 0 }]]
+    },
+    "Build Logger Payload": {
+      "main": [[{ "node": "Send To HERMES LOGGER", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true
+  },
+  "pinData": {}
+}
+

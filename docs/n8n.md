@@ -10,6 +10,12 @@ n8n is the orchestration layer for Hermes. It runs collectors, agent workflows, 
 2. `workflows/n8n/HERMES_ERROR_HANDLER.json`
 3. `workflows/n8n/HERMES_APPROVAL_INBOX.json`
 4. `workflows/n8n/HERMES_MAIN_PIPELINE.json`
+5. `workflows/n8n/MARKETINGAUTO_AUTOFORM_INTAKE.json`
+6. `workflows/n8n/MARKETINGAUTO_REPLYREDDIT_SCOUT.json`
+
+## Marketing Tools
+
+See [n8n-marketing-tools.md](n8n-marketing-tools.md) for the AutoForm and ReplyReddit architecture.
 
 ## Workflow Rules
 
@@ -45,4 +51,3 @@ n8n is the orchestration layer for Hermes. It runs collectors, agent workflows, 
 | WARNING | Quota close, sensitive content, incomplete profile. |
 | ERROR | API unavailable, invalid AI output, CRM unavailable. |
 | CRITICAL | Potential leak, client data mix, compromised key, unauthorized publication. |
-

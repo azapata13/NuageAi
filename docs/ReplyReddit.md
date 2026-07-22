@@ -57,3 +57,6 @@ Subreddit/keyword list
   -> Logger / Incident Agent
 ```
 
+## n8n Architecture
+
+See [n8n-marketing-tools.md](n8n-marketing-tools.md) and `workflows/n8n/MARKETINGAUTO_REPLYREDDIT_SCOUT.json`.
