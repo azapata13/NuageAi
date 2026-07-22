@@ -34,6 +34,7 @@ This repository is the DEV foundation for Hermes:
 
 - Docker Compose: [docker/docker-compose.yml](docker/docker-compose.yml)
 - n8n workflows: [workflows/n8n](workflows/n8n)
+- cPanel DEV app: [cpanel/marketing](cpanel/marketing)
 - Agent prompts: [prompts/hermes_agents.md](prompts/hermes_agents.md)
 - Logger schema: [database/001_hermes_logs.sql](database/001_hermes_logs.sql)
 - Server deploy script: [scripts/deploy_server.sh](scripts/deploy_server.sh)

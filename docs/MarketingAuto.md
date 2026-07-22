@@ -43,3 +43,18 @@ All public replies and direct commercial messages require approval during the ea
 - CRM task
 - daily digest
 - weekly opportunity report
+
+## cPanel DEV App
+
+The first lightweight DEV implementation is available in `cpanel/marketing`. It is designed for shared cPanel hosting and does not require Docker.
+
+This app:
+
+- accepts a site/source list;
+- classifies source type and access mode;
+- creates AutoPostForm review records;
+- stores request data as local JSON;
+- allows human approval decisions;
+- exports JSON for later n8n/Hermes processing.
+
+It does not scrape, publish, or call external platform APIs automatically.

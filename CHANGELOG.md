@@ -4,6 +4,7 @@
 
 - Updated project context: NUAGEai sells turnkey business solutions, MarketingAuto is the first commercial product, and Hermes is internal orchestration infrastructure.
 - Added Site List Intake as the entry point for user-provided websites, platform links, communities, and source lists.
+- Added a lightweight cPanel DEV app for MarketingAuto Intake and AutoPostForm review.
 - Added updated Hermes module list including Strategist, Fact Checker, Cost Controller, and Incident Agent.
 - Clarified DEV-only development, production separation, branch/PR workflow, Docker Secrets preference, and MVP platforms.
 - Added Markdown foundation files for Codex-readable project context.
