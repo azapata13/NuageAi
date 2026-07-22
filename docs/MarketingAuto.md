@@ -19,6 +19,8 @@ Facebook is supported only through official APIs and allowed functionality. Face
 
 ## MVP Capabilities
 
+- accept a user-provided list of sites, URLs, communities, or sources
+- classify each source by platform, access method, and compliance mode
 - monitor selected sources
 - detect relevant conversations
 - score commercial intent

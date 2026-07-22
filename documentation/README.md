@@ -42,11 +42,14 @@ In n8n:
 
 ## Database logs
 
-Run this once against the PostgreSQL database:
+Run these once against the PostgreSQL database:
 
 ```bash
 docker compose --env-file .env -f docker/docker-compose.yml exec -T postgres \
   sh -lc 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB"' < database/001_hermes_logs.sql
+
+docker compose --env-file .env -f docker/docker-compose.yml exec -T postgres \
+  sh -lc 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB"' < database/002_marketingauto_intake.sql
 ```
 
 ## Server deployment

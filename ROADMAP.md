@@ -13,7 +13,8 @@
 
 ## Phase 1: Internal Prototype
 
-- Use Reddit, YouTube, and one additional source.
+- Accept a user-provided site/source list.
+- Use Reddit, YouTube, X, Telegram, and permitted Facebook API or assisted-mode flows.
 - Build a central database.
 - Run orchestration in n8n.
 - Use AI only after rule-based filtering.
@@ -62,6 +63,7 @@
 - Create Logger workflow.
 - Create Guardian workflow.
 - Create AutoPostForm workflow.
+- Create Site List Intake workflow.
 - Create Scout workflow.
 - Create Reddit Collector.
 - Create Dashboard.

@@ -21,7 +21,9 @@ NUAGEai
 ## Hermes Flow
 
 ```text
-Sources
+Site List Intake
+  -> Source Classifier
+  -> Compliance Check
   -> n8n Collectors
   -> Orchestrator
   -> Filter
@@ -41,6 +43,9 @@ Sources
 
 | Layer | Role |
 | --- | --- |
+| Site List Intake | User-provided list of websites, URLs, platforms, communities, or sources to evaluate. |
+| Source Classifier | Detects source type, platform, access mode, and allowed automation level. |
+| Compliance Check | Applies platform rules before collection, analysis, or assisted mode. |
 | Sources | Reddit, YouTube, X, Telegram, and supported Facebook API surfaces. |
 | n8n Collection | API connection, scheduled triggers, pagination, normalization. |
 | Filtering | Deduplication, keyword rules, freshness, language, territory, spam rejection. |

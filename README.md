@@ -25,6 +25,7 @@ This repository is the DEV foundation for Hermes:
 - [AGENTS.md](AGENTS.md)
 - [SECURITY.md](SECURITY.md)
 - [docs/Hermes.md](docs/Hermes.md)
+- [docs/SiteListIntake.md](docs/SiteListIntake.md)
 - [docs/AutoPostForm.md](docs/AutoPostForm.md)
 - [docs/n8n.md](docs/n8n.md)
 - [docs/Docker.md](docs/Docker.md)

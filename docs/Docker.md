@@ -32,6 +32,13 @@ docker compose --env-file .env -f docker/docker-compose.yml exec -T postgres \
   sh -lc 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB"' < database/001_hermes_logs.sql
 ```
 
+## Initialize MarketingAuto Intake Tables
+
+```bash
+docker compose --env-file .env -f docker/docker-compose.yml exec -T postgres \
+  sh -lc 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB"' < database/002_marketingauto_intake.sql
+```
+
 ## Production Notes
 
 - Replace all default passwords.
@@ -39,4 +46,3 @@ docker compose --env-file .env -f docker/docker-compose.yml exec -T postgres \
 - Add HTTPS before serious use.
 - Add backups before storing client data.
 - Keep `.env` out of Git.
-
