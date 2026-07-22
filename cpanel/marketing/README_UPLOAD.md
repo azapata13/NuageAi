@@ -19,10 +19,24 @@ Protect the folder with cPanel Directory Privacy before using it with real clien
 - `export.php`: downloads the request JSON.
 - `data/requests`: local JSON storage.
 
+## ContactForm CSV
+
+Upload a `.csv` with these columns:
+
+```csv
+business_name,website_url,contact_form_url,contact_name,language,offer,message_goal,notes
+```
+
+Example:
+
+```csv
+Serres XYZ,https://serresxyz.example,https://serresxyz.example/contact,,fr,MarketingAuto,Présenter la détection d'opportunités Web,Entreprise au Québec
+```
+
 ## Security
 
 - No secrets are stored in the code.
 - `data/.htaccess` blocks direct access to stored JSON.
 - `robots.txt` blocks indexing.
-- This DEV app does not scrape, post, or call external platforms automatically.
-
+- This DEV app does not scrape, post, submit contact forms, or call external platforms automatically.
+- Automated contact form submission requires the future VPS worker, human approval, quotas, and stop conditions.

@@ -91,6 +91,12 @@ select {
   padding: 11px 12px;
 }
 
+.hint {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 400;
+}
+
 textarea {
   resize: vertical;
 }
@@ -252,6 +258,24 @@ dd {
   margin: 0 0 6px;
 }
 
+.draft-preview {
+  background: #f7faf8;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  margin-bottom: 18px;
+  padding: 14px;
+}
+
+.draft-preview h3 {
+  font-size: 14px;
+  margin: 0 0 8px;
+}
+
+.draft-preview p {
+  margin: 0;
+  white-space: normal;
+}
+
 .decision-form {
   display: grid;
   gap: 14px;
@@ -268,4 +292,3 @@ dd {
     flex-direction: column;
   }
 }
-

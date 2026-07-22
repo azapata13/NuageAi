@@ -51,10 +51,13 @@ The first lightweight DEV implementation is available in `cpanel/marketing`. It 
 This app:
 
 - accepts a site/source list;
+- imports ContactForm Outreach CSV campaigns;
 - classifies source type and access mode;
 - creates AutoPostForm review records;
 - stores request data as local JSON;
 - allows human approval decisions;
 - exports JSON for later n8n/Hermes processing.
 
-It does not scrape, publish, or call external platform APIs automatically.
+It does not scrape, publish, submit contact forms, or call external platform APIs automatically.
+
+Future VPS modules will handle approved `ContactForm Outreach` and `ReplyReddit` automation with quotas, anti-spam controls, and stop conditions.

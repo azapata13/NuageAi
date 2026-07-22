@@ -20,6 +20,7 @@
 - Use AI only after rule-based filtering.
 - Require human approval for all public or direct messages.
 - Generate AutoPostForm records for approved draft review.
+- Import ContactForm Outreach CSV campaigns in cPanel DEV.
 - Log every important decision.
 - Produce a daily report.
 
@@ -64,6 +65,8 @@
 - Create Guardian workflow.
 - Create AutoPostForm workflow.
 - Create Site List Intake workflow.
+- Create ContactForm Outreach workflow.
+- Create ReplyReddit workflow.
 - Create Scout workflow.
 - Create Reddit Collector.
 - Create Dashboard.

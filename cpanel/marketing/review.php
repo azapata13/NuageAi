@@ -47,12 +47,19 @@ $forms = $request['forms'] ?? [];
           <div class="card-top">
             <div>
               <p class="eyebrow"><?= h((string) ($form['platform'] ?? 'other')) ?> / <?= h((string) ($meta['access_mode'] ?? 'manual_review')) ?></p>
-              <h2>Source <?= (int) $index + 1 ?></h2>
+              <h2><?= h((string) (($meta['business_name'] ?? '') ?: 'Source ' . ((int) $index + 1))) ?></h2>
             </div>
             <span class="score <?= h(score_badge_class($score)) ?>"><?= $score ?></span>
           </div>
 
           <a class="source-link" href="<?= h((string) ($form['source_url'] ?? '#')) ?>" target="_blank" rel="noopener noreferrer"><?= h((string) ($form['source_url'] ?? '')) ?></a>
+
+          <?php if (!empty($form['draft_message'])): ?>
+            <div class="draft-preview">
+              <h3>Message proposé</h3>
+              <p><?= nl2br(h((string) $form['draft_message'])) ?></p>
+            </div>
+          <?php endif; ?>
 
           <dl class="facts">
             <div><dt>Guardian</dt><dd><?= h((string) ($form['guardian_status'] ?? '')) ?></dd></div>
@@ -110,4 +117,3 @@ $forms = $request['forms'] ?? [];
   </main>
 </body>
 </html>
-

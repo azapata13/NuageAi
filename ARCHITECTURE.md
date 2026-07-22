@@ -35,7 +35,7 @@ Site List Intake
   -> Guardian
   -> Approval
   -> AutoPostForm
-  -> Publisher / CRM
+  -> ContactForm Outreach / ReplyReddit / Publisher / CRM
   -> Logger / Cost Controller / Dashboard / Learning / Incident Agent
 ```
 
@@ -54,6 +54,8 @@ Site List Intake
 | Queue | Redis for n8n queue execution. |
 | Approval | Human review before public posting or direct commercial outreach. |
 | AutoPostForm | Assisted publication form that displays context, draft, platform rules, required checks, and approval status before any action. |
+| ContactForm Outreach | Approved browser automation for business contact forms, requiring VPS worker, quotas, and stop conditions. |
+| ReplyReddit | Approved Reddit reply/message workflow using official access, subreddit rules, quotas, and human approval. |
 | CRM | Create/update contacts, opportunities, tasks, and source history. |
 | Measurement | Cost, tokens, errors, approvals, conversions, and learning signals. |
 
