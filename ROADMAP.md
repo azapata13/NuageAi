@@ -18,6 +18,7 @@
 - Run orchestration in n8n.
 - Use AI only after rule-based filtering.
 - Require human approval for all public or direct messages.
+- Generate AutoPostForm records for approved draft review.
 - Log every important decision.
 - Produce a daily report.
 
@@ -60,8 +61,8 @@
 - Create Redis queue.
 - Create Logger workflow.
 - Create Guardian workflow.
+- Create AutoPostForm workflow.
 - Create Scout workflow.
 - Create Reddit Collector.
 - Create Dashboard.
 - Create Backup workflow.
-

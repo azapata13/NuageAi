@@ -23,6 +23,7 @@ Facebook is supported only through official APIs and allowed functionality. Face
 - detect relevant conversations
 - score commercial intent
 - draft responses or follow-up actions
+- prepare an AutoPostForm for human review and assisted posting
 - require human approval
 - log cost and decisions
 - create CRM tasks or records
@@ -36,6 +37,7 @@ All public replies and direct commercial messages require approval during the ea
 
 - lead signal summary
 - recommended response draft
+- AutoPostForm review page
 - CRM task
 - daily digest
 - weekly opportunity report

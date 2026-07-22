@@ -32,6 +32,7 @@ Sources
   -> Fact Checker
   -> Guardian
   -> Approval
+  -> AutoPostForm
   -> Publisher / CRM
   -> Logger / Cost Controller / Dashboard / Learning / Incident Agent
 ```
@@ -47,6 +48,7 @@ Sources
 | Storage | PostgreSQL for logs and structured operational state. |
 | Queue | Redis for n8n queue execution. |
 | Approval | Human review before public posting or direct commercial outreach. |
+| AutoPostForm | Assisted publication form that displays context, draft, platform rules, required checks, and approval status before any action. |
 | CRM | Create/update contacts, opportunities, tasks, and source history. |
 | Measurement | Cost, tokens, errors, approvals, conversions, and learning signals. |
 
